@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Memorização de Binários</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background-color: #121212;
+      color: #fff;
+    }
+    input, button {
+      margin: 10px 5px;
+      padding: 8px;
+      font-size: 16px;
+    }
+    #output {
+      margin-top: 20px;
+      font-size: 20px;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>Memorização de Binários</h1>
+  <label for="digitCount">Quantos dígitos binários você quer gerar?</label>
+  <input type="number" id="digitCount" min="18" step="18">
+  <button onclick="gerarDigitos()">Gerar</button>
+  <button onclick="pararTempoDeMemorizacao()" id="stopMemBtn" class="hidden">Parar Memorização</button>
+  <button onclick="mostrarResultado()" id="showResultBtn" class="hidden">Mostrar Resultado</button>
+
+  <div id="output"></div>
+  <div id="timers"></div>
+
+  <script>
+    let startMemTime, endMemTime, startRecallTime, endRecallTime;
+    let digitosGerados = "";
+
+    function gerarDigitos() {
+      const quantidade = parseInt(document.getElementById("digitCount").value);
+      if (!quantidade || quantidade < 18 || quantidade % 18 !== 0) {
+        alert("Por favor, insira um número múltiplo de 18.");
+        return;
+      }
+
+      digitosGerados = "";
+      for (let i = 0; i < quantidade; i++) {
+        digitosGerados += Math.random() < 0.5 ? "0" : "1";
+        if ((i + 1) % 6 === 0 && (i + 1) % 18 !== 0) digitosGerados += " ";
+        if ((i + 1) % 18 === 0 && i + 1 !== quantidade) digitosGerados += " - ";
+      }
+
+      document.getElementById("output").textContent = digitosGerados;
+      document.getElementById("stopMemBtn").classList.remove("hidden");
+      document.getElementById("showResultBtn").classList.add("hidden");
+      document.getElementById("timers").textContent = "";
+
+      startMemTime = new Date();
+    }
+
+    function pararTempoDeMemorizacao() {
+      endMemTime = new Date();
+      startRecallTime = new Date();
+      document.getElementById("output").textContent = "(Digite sua resposta no papel, resultado oculto)";
+      document.getElementById("showResultBtn").classList.remove("hidden");
+      document.getElementById("stopMemBtn").classList.add("hidden");
+    }
+
+    function mostrarResultado() {
+      endRecallTime = new Date();
+      const tempoMemorizacao = ((endMemTime - startMemTime) / 1000).toFixed(2);
+      const tempoRecall = ((endRecallTime - startRecallTime) / 1000).toFixed(2);
+
+      document.getElementById("output").textContent = digitosGerados;
+      document.getElementById("timers").innerHTML =
+        `<p><strong>Tempo de memorização:</strong> ${tempoMemorizacao} segundos</p>` +
+        `<p><strong>Tempo de recall:</strong> ${tempoRecall} segundos</p>`;
+
+      document.getElementById("showResultBtn").classList.add("hidden");
+    }
+  </script>
+</body>
+</html>
